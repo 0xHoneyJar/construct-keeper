@@ -39,7 +39,7 @@ grimoires/pub/research/users/*.md
 
 Compare against existing UTCs:
 ```bash
-grimoires/observer/canvas/*.md
+grimoires/keeper/canvas/*.md
 ```
 
 Build list of pending migrations.
@@ -96,11 +96,11 @@ Based on evidence strength:
 | 5+ users expressing same need | `strongly-validated` |
 | Insight marked as "Validated" in tracker | `strongly-validated` |
 
-Cross-reference with `grimoires/observer/tracker.md` for validated insights.
+Cross-reference with `grimoires/keeper/tracker.md` for validated insights.
 
 ### Step 5: Generate UTC File
 
-Create file at `grimoires/observer/canvas/{username}.md`:
+Create file at `grimoires/keeper/canvas/{username}.md`:
 
 ```markdown
 ---
@@ -173,7 +173,7 @@ migrated_from: "grimoires/pub/research/users/{username}.md"
 
 ### Step 6: Update State
 
-Update `grimoires/observer/state.yaml`:
+Update `grimoires/keeper/state.yaml`:
 
 ```yaml
 canvases:
@@ -214,7 +214,7 @@ Migration Summary:
 │ ...            │ ...                 │ ...              │ ...            │
 └────────────────┴─────────────────────┴──────────────────┴────────────────┘
 
-UTCs created: grimoires/observer/canvas/
+UTCs created: grimoires/keeper/canvas/
 
 Next steps:
 - Review migrated UTCs for accuracy

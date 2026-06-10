@@ -7,7 +7,7 @@
 > Get value in 30 seconds.
 
 1. Capture feedback: `/observe @username "their quote" --wallet 0x...`
-2. Review canvas: `grimoires/observer/canvas/{username}-canvas.md`
+2. Review canvas: `grimoires/keeper/canvas/{username}-canvas.md`
 3. Check freshness: `/stale` to see which artifacts need updating
 
 ## Prerequisites
@@ -43,7 +43,7 @@
 ## Grimoire Structure
 
 ```
-grimoires/observer/
+grimoires/keeper/
 ├── canvas/                   # User Truth Canvases (one per user)
 │   ├── xabbu.md
 │   └── elcapitan-canvas.md

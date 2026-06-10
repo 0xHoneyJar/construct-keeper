@@ -49,7 +49,7 @@ for canvas in $(gp_list_canvases); do
   user=$(basename "$canvas" .md)
 
   # Check cognition status for this user
-  cognition_path="grimoires/observer/cognition/${user}.yaml"
+  cognition_path="grimoires/keeper/cognition/${user}.yaml"
   if [[ -f "$cognition_path" ]]; then
     # /follow-up Step 2c.5 handles staleness check + auto-refresh
     # Here we just report pre-generation status for the status line

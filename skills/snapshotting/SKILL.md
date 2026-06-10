@@ -32,7 +32,7 @@ Parse the invocation arguments:
 - Check for `--data-only`, `--cohort`, `--diff` flags
 
 If `--cohort` is specified:
-- Read all wallets from `grimoires/observer/wallets.yaml`
+- Read all wallets from `grimoires/keeper/wallets.yaml`
 - Process each wallet sequentially through Steps 2–12
 - LOW-weight wallets are skipped (no MER created) per Step 5
 - Print summary at end: "N MERs created for M wallets (S skipped as LOW)"
@@ -40,9 +40,9 @@ If `--cohort` is specified:
 ```bash
 # --cohort mode: iterate all tracked wallets
 if [[ "$cohort_mode" == "true" ]]; then
-    wallets=$(yq -r '.wallets | keys[]' grimoires/observer/wallets.yaml 2>/dev/null || echo "")
+    wallets=$(yq -r '.wallets | keys[]' grimoires/keeper/wallets.yaml 2>/dev/null || echo "")
     if [[ -z "$wallets" ]]; then
-        echo "ERROR: No wallets found in grimoires/observer/wallets.yaml" >&2
+        echo "ERROR: No wallets found in grimoires/keeper/wallets.yaml" >&2
         exit 1
     fi
 
@@ -72,7 +72,7 @@ fi
 ```
 
 If `--diff` is specified:
-- Read the baseline MER from `grimoires/observer/timeline/{MER-ID}.md`
+- Read the baseline MER from `grimoires/keeper/timeline/{MER-ID}.md`
 - Extract baseline data state from frontmatter (combined_score, og_score, nft_score, onchain_score, overall_rank, crowd_tier, elite_tier)
 - After Step 4 (fetch current data), generate a comparison table
 - Include before/after screenshots if visual layer available in both MERs
@@ -80,7 +80,7 @@ If `--diff` is specified:
 ```bash
 # --diff mode: compare current state against baseline MER
 if [[ -n "$diff_baseline" ]]; then
-    baseline_file="grimoires/observer/timeline/${diff_baseline}.md"
+    baseline_file="grimoires/keeper/timeline/${diff_baseline}.md"
     if [[ ! -f "$baseline_file" ]]; then
         echo "ERROR: Baseline MER not found: $baseline_file" >&2
         exit 1
@@ -163,8 +163,8 @@ data_json=$(scripts/observer/score-api-query.sh profile "$wallet" --format snaps
 
 Store JSON sidecar for archival:
 ```bash
-mkdir -p "grimoires/observer/timeline/snapshots/${mer_id}"
-echo "$data_json" > "grimoires/observer/timeline/snapshots/${mer_id}/${alias}-data.json"
+mkdir -p "grimoires/keeper/timeline/snapshots/${mer_id}"
+echo "$data_json" > "grimoires/keeper/timeline/snapshots/${mer_id}/${alias}-data.json"
 ```
 
 Extract fields for the MER Data State table:
@@ -229,13 +229,13 @@ fi
 
 Requires `SUPABASE_URL` and `SUPABASE_STORAGE_TOKEN` environment variables. Uses scoped storage token (NEVER service role key).
 
-**Degradation**: Upload failure → `visual_snapshots.profile` set to null, local screenshot retained at `/tmp/${mer_id}-profile.png`. Local cache also at gitignored `grimoires/observer/timeline/snapshots/`.
+**Degradation**: Upload failure → `visual_snapshots.profile` set to null, local screenshot retained at `/tmp/${mer_id}-profile.png`. Local cache also at gitignored `grimoires/keeper/timeline/snapshots/`.
 
 ### Step 8: Pull Perception Layer
 
 Check if a canvas exists for this wallet:
 ```bash
-canvas_path="grimoires/observer/canvas/${alias}-canvas.md"
+canvas_path="grimoires/keeper/canvas/${alias}-canvas.md"
 ```
 
 If canvas exists:
@@ -264,7 +264,7 @@ If canvas does not exist:
 | `{{SIGNAL_WEIGHT}}` | Step 5 classification |
 | `{{WALLET_ADDRESS}}` | Step 2 resolved address |
 | `{{WALLET_ALIAS}}` | Step 2 alias |
-| `{{LOCAL_CACHE_PATH}}` | `grimoires/observer/timeline/snapshots/${mer_id}/${alias}-data.json` |
+| `{{LOCAL_CACHE_PATH}}` | `grimoires/keeper/timeline/snapshots/${mer_id}/${alias}-data.json` |
 | `{{SCREENSHOT_URL}}` | Step 7 URL or null |
 | `{{ERA}}` | null (future use) |
 | `{{CORE_CONVICTION}}` | From canvas or "To be determined" |
@@ -286,12 +286,12 @@ If canvas does not exist:
 
 4. Write to temp path:
 ```
-grimoires/observer/timeline/.${mer_id}.tmp.md
+grimoires/keeper/timeline/.${mer_id}.tmp.md
 ```
 
 5. Validate the generated MER:
 ```bash
-scripts/observer/validate-mer.sh --instance "grimoires/observer/timeline/.${mer_id}.tmp.md"
+scripts/observer/validate-mer.sh --instance "grimoires/keeper/timeline/.${mer_id}.tmp.md"
 ```
 
 If validation fails, log error and exit (do not commit invalid MER).
@@ -308,7 +308,7 @@ final_path=$(scripts/observer/commit-mer.sh \
   "$trigger" \
   "$alias" \
   "$signal_weight" \
-  "grimoires/observer/timeline/.${mer_id}.tmp.md")
+  "grimoires/keeper/timeline/.${mer_id}.tmp.md")
 ```
 
 If commit-mer.sh fails:
@@ -371,7 +371,7 @@ Print completion summary:
 
 ```
 MER Created: ${mer_id}
-Path: grimoires/observer/timeline/${mer_id}.md
+Path: grimoires/keeper/timeline/${mer_id}.md
 Wallet: ${alias} (${wallet_address})
 Trigger: ${trigger}
 Weight: ${signal_weight}
@@ -477,7 +477,7 @@ Before creating a MER, check if one already exists for this wallet+trigger+date 
     local existing
     existing=$(jq -r --arg alias "$wallet_or_alias" --arg date "$event_date" \
         '.entries[] | select(.trigger == "feedback") | select(.date == $date) | select(.wallets == $alias)' \
-        grimoires/observer/timeline/INDEX.json 2>/dev/null || true)
+        grimoires/keeper/timeline/INDEX.json 2>/dev/null || true)
 
     if [[ -n "$existing" ]]; then
         echo "SKIP: MER already exists for ${wallet_or_alias}:feedback:${event_date}" >&2

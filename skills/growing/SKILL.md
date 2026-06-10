@@ -53,7 +53,7 @@ source scripts/observer/growth-state.sh
 gp_status_header "grow"
 
 # Clean up orphaned .tmp files from crashed runs (see scripts/staleness.md)
-find grimoires/observer/growth/ -name "*.tmp" -mmin +5 -delete 2>/dev/null
+find grimoires/keeper/growth/ -name "*.tmp" -mmin +5 -delete 2>/dev/null
 
 if ! gp_check_growth_dir; then
   gp_status_fail "growth" "no growth files — run /listen first"
@@ -75,9 +75,9 @@ ELSE:
   users = list_growth_users()  # all *.yaml in growth dir
 
 FOR each user in users (sequential, fresh context per user):
-  growth_path = "grimoires/observer/growth/${user}.yaml"
-  proposed_path = "grimoires/observer/growth/${user}.proposed_matches.yaml"
-  lock_path = "grimoires/observer/growth/${user}.yaml.lock"
+  growth_path = "grimoires/keeper/growth/${user}.yaml"
+  proposed_path = "grimoires/keeper/growth/${user}.proposed_matches.yaml"
+  lock_path = "grimoires/keeper/growth/${user}.yaml.lock"
 
   IF NOT exists(growth_path): CONTINUE
 

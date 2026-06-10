@@ -15,6 +15,6 @@ allowed-tools:
   - Bash
 capabilities:
   model_tier: standard
-  danger_level: low
+  danger_level: safe
   effort_hint: medium
   downgrade_allowed: true

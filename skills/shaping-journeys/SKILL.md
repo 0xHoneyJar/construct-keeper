@@ -25,7 +25,7 @@ Manage user canvases and shape common patterns into journey definitions for flow
 
 Before any mode executes, gather enriched signal data from all canvases.
 
-For each canvas in `grimoires/observer/canvas/*.md`:
+For each canvas in `grimoires/keeper/canvas/*.md`:
 
 1. **Read existing sections**:
    - `## Journey Fragments` (existing behavioral context)
@@ -57,7 +57,7 @@ When invoked without arguments, display canvas summary.
 ### Step 1: Read All Canvases
 
 ```bash
-grimoires/observer/canvas/*.md
+grimoires/keeper/canvas/*.md
 ```
 
 ### Step 2: Parse Canvas Frontmatter
@@ -102,7 +102,7 @@ Extract patterns from canvases to create journey definitions.
 
 ### Step 1: Load All Canvases
 
-Read all `grimoires/observer/canvas/*.md` files.
+Read all `grimoires/keeper/canvas/*.md` files.
 Parse YAML frontmatter and markdown sections.
 
 ### Step 2: Extract Level 3 Goals
@@ -117,7 +117,7 @@ From each canvas, extract:
 
 Before pattern detection, load domain vocabulary to prevent misinterpretation during synthesis:
 
-1. Read `grimoires/observer/glossary.yaml`
+1. Read `grimoires/keeper/glossary.yaml`
 2. During pattern detection and goal extraction, check if any glossary term appears in user quotes (case-insensitive match on the `term` field)
 3. If a match is found:
    - Use the `meaning` field as the canonical interpretation
@@ -236,7 +236,7 @@ This ensures newly created journeys and their source canvases have bidirectional
 
 ### Step 6: Update Laboratory State
 
-Update `grimoires/observer/state.yaml`:
+Update `grimoires/keeper/state.yaml`:
 ```yaml
 active:
   phase: synthesis
@@ -311,7 +311,7 @@ Output:
 Actions:
   - Generate diagram: /diagram deposit-flow
   - Generate test: /validate deposit-flow
-  - Edit journey: Read grimoires/observer/journeys/deposit-flow.md
+  - Edit journey: Read grimoires/keeper/journeys/deposit-flow.md
 ```
 
 ---

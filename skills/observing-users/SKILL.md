@@ -78,7 +78,7 @@ Always:
 
 Before interpreting any user quotes:
 
-1. Read `grimoires/observer/glossary.yaml`
+1. Read `grimoires/keeper/glossary.yaml`
 2. For each quote being annotated, check if any glossary term appears in the text (case-insensitive match on the `term` field)
 3. If a match is found:
    - Use the `meaning` field as the canonical interpretation
@@ -99,7 +99,7 @@ Extract from command:
 
 Check if canvas exists:
 ```bash
-grimoires/observer/canvas/{username}-canvas.md
+grimoires/keeper/canvas/{username}-canvas.md
 ```
 
 **If exists**: Read current canvas, prepare to append
@@ -191,7 +191,7 @@ Determine wallet address (in priority order):
 
 When invoked with `--enrich` flag:
 
-1. **Load existing canvas** — error if `grimoires/observer/canvas/{username}-canvas.md` not found
+1. **Load existing canvas** — error if `grimoires/keeper/canvas/{username}-canvas.md` not found
 2. **Run Step 2.5** (Score API Enrichment) using provided `--wallet` or canvas frontmatter wallet
 3. **Add/update `## Score Context` section** in canvas
 4. **Update canvas frontmatter** with `wallet` and `score_snapshot`
@@ -202,7 +202,7 @@ When invoked with `--enrich` flag:
 
 Report output for `--enrich` mode:
 ```
-✓ Canvas enriched: grimoires/observer/canvas/{username}-canvas.md
+✓ Canvas enriched: grimoires/keeper/canvas/{username}-canvas.md
 
 Score Context:
   Rank: #{rank} | Combined: {combined_score}
@@ -340,7 +340,7 @@ confidence:
   validation_count: 0
   related_paths:
     - "lib/score-api/**"
-    - "grimoires/observer/canvas/"
+    - "grimoires/keeper/canvas/"
 schema_version: 2
 lifecycle_state: "{new_user|reactivating|power_user|churning}"
 last_enriched: "{ISO timestamp or null}"
@@ -436,7 +436,7 @@ After canvas creation or update, wire it into the knowledge graph if it belongs 
 
 ```bash
 source scripts/observer/golden-path-lib.sh
-wire_canvas_links "grimoires/observer/canvas/{username}-canvas.md"
+wire_canvas_links "grimoires/keeper/canvas/{username}-canvas.md"
 ```
 
 This injects `<!-- midi:journey-links -->` sentinel with Journeys and Related Canvases sections if the canvas appears in any journey's `source_canvases`. If the canvas is not in any journey, this is a silent no-op. Skip this step in `--enrich` mode.
@@ -470,7 +470,7 @@ If found, add to `linked_observations` in frontmatter.
 
 ### Step 7: Update Laboratory State
 
-Update `grimoires/observer/state.yaml`:
+Update `grimoires/keeper/state.yaml`:
 ```yaml
 active:
   phase: discovery
@@ -526,7 +526,7 @@ emit_event "observer.feedback_captured" \
     "context": {
       "user_id": "{salted hash per redaction-guide.md, or omit if unavailable}",
       "user_tier": "{high | medium | low — derived from rank}",
-      "artifact_path": "grimoires/observer/canvas/{username}-canvas.md"
+      "artifact_path": "grimoires/keeper/canvas/{username}-canvas.md"
     },
     "subject": {
       "resolution_status": "{resolved | unresolved}",
@@ -570,7 +570,7 @@ See `grimoires/shared/feedback/redaction-guide.md` for hashing and redaction rul
 Display summary to user:
 
 ```
-✓ Canvas updated: grimoires/observer/canvas/{username}-canvas.md
+✓ Canvas updated: grimoires/keeper/canvas/{username}-canvas.md
 ✓ FeedbackEvent emitted: observer.feedback_captured (via Loa event bus)
 
 Level 3 Hypothesis Extracted:
@@ -644,7 +644,7 @@ A concrete example from this ecosystem: a user with a bear-themed name who sends
 
 ### Step 10: Emit Agent Interaction Log
 
-As the final step, append a JSONL line to `grimoires/observer/agent-logs/{YYYY-MM-DD}.jsonl`:
+As the final step, append a JSONL line to `grimoires/keeper/agent-logs/{YYYY-MM-DD}.jsonl`:
 
 ```json
 {
@@ -663,7 +663,7 @@ As the final step, append a JSONL line to `grimoires/observer/agent-logs/{YYYY-M
 - `duration_ms` is approximate (wall-clock estimate, not precise timer)
 - `artifacts_written` = number of canvas files written/updated
 - `events_emitted` = number of FeedbackEvents emitted (0 for `--enrich` mode)
-- Create `grimoires/observer/agent-logs/` directory if it doesn't exist
+- Create `grimoires/keeper/agent-logs/` directory if it doesn't exist
 - See `grimoires/shared/feedback/agent-log-format.md` for format reference
 
 ---

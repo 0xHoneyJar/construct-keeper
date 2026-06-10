@@ -53,7 +53,7 @@ if ! scripts/observer/score-api-query.sh profile 0x00000000000000000000000000000
 fi
 
 # Clean up orphaned .tmp files from crashed runs (see scripts/staleness.md)
-find grimoires/observer/cognition/ -name "*.tmp" -mmin +5 -delete 2>/dev/null
+find grimoires/keeper/cognition/ -name "*.tmp" -mmin +5 -delete 2>/dev/null
 
 # Load config
 cognition_enabled=$(yq '.observer.cognition.enabled // true' .loa.config.yaml)
@@ -70,13 +70,13 @@ fear_types=$(yq '.observer.cognition.fear_types[]' .loa.config.yaml)
 ### Step 1: Candidate Selection
 
 ```bash
-canvas_paths=$(Glob "grimoires/observer/canvas/*.md")
+canvas_paths=$(Glob "grimoires/keeper/canvas/*.md")
 IF --canvas flag: filter to single user
 
 candidates=[]
 FOR each canvas_path:
   user = basename(canvas_path, ".md")
-  cognition_path = "grimoires/observer/cognition/${user}.yaml"
+  cognition_path = "grimoires/keeper/cognition/${user}.yaml"
 
   IF --force:
     candidates.append(user)
@@ -90,7 +90,7 @@ FOR each canvas_path:
 
   # Check staleness using canonical function
   canvas_frontmatter = read_frontmatter(canvas_path)
-  growth_path = "grimoires/observer/growth/${user}.yaml"
+  growth_path = "grimoires/keeper/growth/${user}.yaml"
   # Score snapshot not yet fetched at selection time — pass null (skips score trigger)
   stale = check_staleness(cognition, canvas_frontmatter, growth_path, score_snapshot_raw=null)
 
@@ -108,7 +108,7 @@ IF len(candidates) == 0:
 distilled_count = 0
 FOR each user in candidates:
   # Read inputs
-  canvas_path = "grimoires/observer/canvas/${user}.md"
+  canvas_path = "grimoires/keeper/canvas/${user}.md"
   canvas_body = Read(canvas_path)
   canvas_frontmatter = read_frontmatter(canvas_body)
   wallet = canvas_frontmatter.wallet
@@ -119,7 +119,7 @@ FOR each user in candidates:
   score_snapshot = parse_json(score_snapshot_raw) IF score_snapshot_raw != "unavailable" ELSE null
 
   # Growth state
-  growth_path = "grimoires/observer/growth/${user}.yaml"
+  growth_path = "grimoires/keeper/growth/${user}.yaml"
   growth_state = read_yaml(growth_path) IF exists ELSE null
 
   # E9 L4: Extract pattern effectiveness for /distill context
@@ -216,11 +216,11 @@ FOR each user in candidates:
   cognition_yaml.stale_after_cycles = 1 IF is_bootstrap ELSE stale_after
 
   # Write cognition sidecar (atomic, under lock)
-  lock_path = "grimoires/observer/cognition/${user}.yaml.lock"
+  lock_path = "grimoires/keeper/cognition/${user}.yaml.lock"
   WITH flock(lock_path):
-    tmp_path = "grimoires/observer/cognition/${user}.yaml.tmp"
+    tmp_path = "grimoires/keeper/cognition/${user}.yaml.tmp"
     Write(tmp_path, cognition_yaml)
-    mv(tmp_path, "grimoires/observer/cognition/${user}.yaml")  # atomic rename
+    mv(tmp_path, "grimoires/keeper/cognition/${user}.yaml")  # atomic rename
   distilled_count += 1
 
 gp_status_ok "cognition" "${distilled_count} canvases analyzed"
@@ -247,8 +247,8 @@ IF distilled_count > 0:
 ```bash
 IF --synthesize:
   # Fill missing cognition (bounded — max 10 per run unless --fill-all)
-  all_canvas_users = [basename(p, ".md") for p in Glob("grimoires/observer/canvas/*.md")]
-  missing_users = [u for u in all_canvas_users if not exists("grimoires/observer/cognition/${u}.yaml")]
+  all_canvas_users = [basename(p, ".md") for p in Glob("grimoires/keeper/canvas/*.md")]
+  missing_users = [u for u in all_canvas_users if not exists("grimoires/keeper/cognition/${u}.yaml")]
   max_fill = 10  # prevents unbounded work
   IF --fill-all flag: max_fill = len(missing_users)
   fill_count = min(len(missing_users), max_fill)
@@ -264,7 +264,7 @@ IF --synthesize:
 
   # Read all cognition files (freshness filter: only last 14 days)
   all_cognition = []
-  FOR f in Glob("grimoires/observer/cognition/*.yaml"):
+  FOR f in Glob("grimoires/keeper/cognition/*.yaml"):
     cog = read_yaml(f)
     IF cog.generated_at > (now - 14 days):
       all_cognition.append(cog)
@@ -272,7 +272,7 @@ IF --synthesize:
   # Build coverage table
   coverage = []
   FOR each user in all_canvas_users:
-    cog_path = "grimoires/observer/cognition/${user}.yaml"
+    cog_path = "grimoires/keeper/cognition/${user}.yaml"
     IF exists(cog_path):
       cog = read_yaml(cog_path)
       status = "fresh"  # or "refreshed" if was stale, "bootstrapped" if was new
@@ -295,7 +295,7 @@ IF --synthesize:
 
   # Write synthesis report
   date = now_date_string()  # YYYY-MM-DD
-  Write("grimoires/observer/cognition/synthesis-${date}.md", synthesis_result)
+  Write("grimoires/keeper/cognition/synthesis-${date}.md", synthesis_result)
   gp_status_ok "synthesis" "cross-user patterns detected"
 ```
 

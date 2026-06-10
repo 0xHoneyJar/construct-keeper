@@ -15,5 +15,5 @@ allowed-tools:
 capabilities:
   model_tier: standard
   danger_level: moderate
-  effort_hint: heavy
+  effort_hint: high
   downgrade_allowed: false

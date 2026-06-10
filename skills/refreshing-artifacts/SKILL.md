@@ -25,9 +25,9 @@ Re-validate an artifact by routing to the appropriate re-validation skill, then 
 
 **Examples**:
 ```
-/refresh grimoires/observer/canvas/xabbu-canvas.md
+/refresh grimoires/keeper/canvas/xabbu-canvas.md
 /refresh grimoires/artisan/taste.md
-/refresh grimoires/observer/reality/profile.md
+/refresh grimoires/keeper/reality/profile.md
 ```
 
 ---
@@ -162,8 +162,8 @@ When initializing confidence for the first time, infer `related_paths` from arti
 
 | Artifact Type | Default related_paths |
 |---------------|----------------------|
-| user-canvas | `["lib/score-api/**", "grimoires/observer/canvas/"]` |
-| journey | `["grimoires/observer/canvas/", "grimoires/observer/journeys/"]` |
+| user-canvas | `["lib/score-api/**", "grimoires/keeper/canvas/"]` |
+| journey | `["grimoires/keeper/canvas/", "grimoires/keeper/journeys/"]` |
 | reality | `["src/", "lib/"]` |
 | taste | `["grimoires/artisan/", "src/components/"]` |
 | unknown | `[]` (empty — user should configure) |

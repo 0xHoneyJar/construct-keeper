@@ -56,8 +56,8 @@ REQUIRED:
   grimoires/mining/provenance/index.jsonl     — Provenance index (JSONL, 163+ records)
   grimoires/mining/chronicle/                 — Chronicle entries directory
   scripts/observer/score-api-query.sh         — Score API wrapper
-  grimoires/observer/canvas/                  — Canvas directory with *.md files
-  grimoires/observer/follow-ups/              — Follow-up output directory
+  grimoires/keeper/canvas/                  — Canvas directory with *.md files
+  grimoires/keeper/follow-ups/              — Follow-up output directory
 
 IF any missing: ABORT with clear error naming the missing dependency.
 ```
@@ -66,9 +66,9 @@ IF any missing: ABORT with clear error naming the missing dependency.
 
 Load these shared resources. **No canvas body content is loaded at this stage.**
 
-1. **Canvas paths**: `Glob("grimoires/observer/canvas/*.md")` — filter by `--canvas` flag if provided
+1. **Canvas paths**: `Glob("grimoires/keeper/canvas/*.md")` — filter by `--canvas` flag if provided
 2. **Chronicle frontmatter**: Read each `grimoires/mining/chronicle/**/*.md`, extract YAML frontmatter only (id, taxonomy, time.start, time.end, confidence). Keep only entries where `taxonomy` starts with `system.app.released`.
-3. **Follow-up metadata index**: Read each `grimoires/observer/follow-ups/*.md`, extract YAML frontmatter only (generated, users). Build index: `{username → [{date, file_path}]}`. **Do NOT load per-user body content here.**
+3. **Follow-up metadata index**: Read each `grimoires/keeper/follow-ups/*.md`, extract YAML frontmatter only (generated, users). Build index: `{username → [{date, file_path}]}`. **Do NOT load per-user body content here.**
 4. **Provenance index**: Read all lines from `grimoires/mining/provenance/index.jsonl`. Parse each as JSON. This is loaded once and filtered per-user in the loop.
 
 ### Step 2: Per-User Isolation Loop
@@ -99,14 +99,14 @@ FOR each canvas_path:
   # 2c.5. Load cognition state (L3 Intelligence Layer)
   cognition = null
   cognition_status = "missing"
-  cognition_path = "grimoires/observer/cognition/{user}.yaml"
+  cognition_path = "grimoires/keeper/cognition/{user}.yaml"
 
   IF exists(cognition_path):
     cognition = read_yaml(cognition_path)
 
     # Check staleness using canonical function from scripts/staleness.md
     # (single source of truth — do not redefine inline)
-    growth_path = "grimoires/observer/growth/{user}.yaml"
+    growth_path = "grimoires/keeper/growth/{user}.yaml"
     stale = check_staleness(cognition, canvas_frontmatter, growth_path, score_snapshot_raw)
 
     IF stale:
@@ -114,7 +114,7 @@ FOR each canvas_path:
       # Auto-refresh: run /distill inline under per-user lock
       IF NOT --allow-stale flag:
         Log: "Cognition stale for {user} — auto-refreshing"
-        lock_path = "grimoires/observer/cognition/{user}.yaml.lock"
+        lock_path = "grimoires/keeper/cognition/{user}.yaml.lock"
         WITH flock(lock_path):
           # Use same input bundle as /think Step 2:
           # score_snapshot_raw, growth_state, prov_records, config
@@ -203,7 +203,7 @@ FOR each canvas_path:
   growth_summary = null
   cycle_started_at = null
   IF config.observer.growth.enabled:
-    growth_path = "grimoires/observer/growth/{user}.yaml"
+    growth_path = "grimoires/keeper/growth/{user}.yaml"
     lock_path = "{growth_path}.lock"
     IF exists(growth_path):
       # Snapshot cycle boundary — deterministic timestamp for all operations
@@ -247,7 +247,7 @@ FOR each canvas_path:
 
   # 2g.6. Query chronicle for temporal context (E7 Chronicle Layer)
   chronicle_summaries = ""
-  chronicle_index = "grimoires/observer/chronicle/index.jsonl"
+  chronicle_index = "grimoires/keeper/chronicle/index.jsonl"
   IF exists(chronicle_index):
     # Extract last feedback date from canvas frontmatter (last_enriched or most recent quote timestamp)
     last_feedback_date = canvas_frontmatter.last_enriched or today()
@@ -595,7 +595,7 @@ FOR each subagent result:
 
 #### Per-User Follow-up Batch
 
-Write to `grimoires/observer/follow-ups/{YYYY-MM-DD}.md`:
+Write to `grimoires/keeper/follow-ups/{YYYY-MM-DD}.md`:
 
 ```markdown
 ---
@@ -621,7 +621,7 @@ temporal_summary:
 
 ## {Username}
 
-**Canvas**: grimoires/observer/canvas/{username}-canvas.md
+**Canvas**: grimoires/keeper/canvas/{username}-canvas.md
 **Triggers**: {trigger description}
 **Score context**: {rank, tier, key scores from fresh snapshot}
 **Verification**: {N}/{N} quotes verified (orchestrator-validated)
@@ -653,7 +653,7 @@ IF config.observer.growth.enabled:
   FOR user_result in validated_results:
     IF user_result.skip_reason is not null: CONTINUE
 
-    growth_path = "grimoires/observer/growth/{user_result.user}.yaml"
+    growth_path = "grimoires/keeper/growth/{user_result.user}.yaml"
     lock_path = "{growth_path}.lock"
 
     # Acquire per-user file lock (same lock used by /ingest-dm and Step 2g.5)
@@ -839,7 +839,7 @@ After all per-user Tasks complete:
    - Behavioral clusters
    - Lifecycle transitions
 
-3. Write synthesis output to `grimoires/observer/follow-ups/{date}-synthesis.md`
+3. Write synthesis output to `grimoires/keeper/follow-ups/{date}-synthesis.md`
 
 4. Synthesis failure does NOT fail per-user follow-ups.
 
@@ -874,7 +874,7 @@ New output preserves these invariants for existing consumers:
 | `## {Username}` sections | Per-user headings preserved |
 | `**Canvas**:`, `**Triggers**:` | Per-user metadata lines preserved |
 | `### Message N (...)` with `> Anchor quote:` | Message structure preserved |
-| File path | `grimoires/observer/follow-ups/{YYYY-MM-DD}.md` |
+| File path | `grimoires/keeper/follow-ups/{YYYY-MM-DD}.md` |
 | New keys | `architecture`, `skipped_users`, `verification_summary`, `temporal_summary` are additive |
 
 ---

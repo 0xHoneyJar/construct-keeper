@@ -89,7 +89,7 @@ If `--canvas` provided, use that user. Otherwise, select the best candidate:
 
 Load selected canvas:
 ```bash
-grimoires/observer/canvas/{username}-canvas.md
+grimoires/keeper/canvas/{username}-canvas.md
 ```
 
 Extract:
@@ -208,7 +208,7 @@ Update hypothesis confidence:
 
 1. Generate Problem-Constraint Doc from template:
    ```bash
-   grimoires/observer/templates/problem-constraint-doc.md
+   grimoires/keeper/templates/problem-constraint-doc.md
    ```
 2. Populate with:
    - 3 evidence quotes from canvases (with provenance hashes)
@@ -217,14 +217,14 @@ Update hypothesis confidence:
    - Build spec (WHAT to build, not HOW)
 3. Write to:
    ```bash
-   grimoires/observer/problem-constraints/{hypothesis_id}-{date}.md
+   grimoires/keeper/problem-constraints/{hypothesis_id}-{date}.md
    ```
 4. Report: ready for Zerker handoff via `/file-gap`
 
 **If Kill or Silence signal:**
 
 1. Update canvas hypothesis status to `falsified` or `inconclusive`
-2. Record as Atomic Learning in `grimoires/observer/learnings/`:
+2. Record as Atomic Learning in `grimoires/keeper/learnings/`:
    ```markdown
    ## Learning: {hypothesis_id} — {date}
 
@@ -250,12 +250,12 @@ Commitment: {strong / social / kill / silence}
 
 Result:
   {If strong/social:}
-  ✓ Problem-Constraint Doc created: grimoires/observer/problem-constraints/{id}-{date}.md
+  ✓ Problem-Constraint Doc created: grimoires/keeper/problem-constraints/{id}-{date}.md
   ✓ Ready for Zerker handoff: /file-gap {id}
 
   {If kill/silence:}
   ✗ Hypothesis {falsified/inconclusive}
-  ✓ Learning recorded: grimoires/observer/learnings/{id}-{date}.md
+  ✓ Learning recorded: grimoires/keeper/learnings/{id}-{date}.md
   ✗ No issue filed — need not validated
 
 Next Steps:
@@ -312,5 +312,5 @@ After concierge test:
 - `/file-gap` — Downstream: files validated obstacles as issues
 - `/observe` — Signal capture that populates canvases
 - `/follow-up` — Prior messages inform simulation design
-- `grimoires/observer/ARCHETYPE.md` — The Listener archetype governing this skill
-- `grimoires/observer/templates/problem-constraint-doc.md` — Output template
+- `grimoires/keeper/ARCHETYPE.md` — The Listener archetype governing this skill
+- `grimoires/keeper/templates/problem-constraint-doc.md` — Output template

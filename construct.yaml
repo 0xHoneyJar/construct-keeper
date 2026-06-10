@@ -1,6 +1,6 @@
 schema_version: 3
-name: Beehive
-slug: observer
+name: Keeper
+slug: keeper
 version: 3.0.0
 description: "Product analytics and user research pipeline. Capture feedback from Discord, Telegram, and direct sources. Synthesize into user journey maps and gap reports. File issues to GitHub/Linear. Hypothesis-first: forms theories from user quotes, not assumptions."
 short_description: "User research + feedback pipeline"
@@ -66,21 +66,21 @@ skills:
   - slug: growing
     path: skills/growing
 repository:
-  url: https://github.com/0xHoneyJar/construct-observer.git
+  url: https://github.com/0xHoneyJar/construct-keeper.git
   homepage: https://constructs.network/constructs/observer
 events:
   emits:
-    - type: forge.observer.canvas_created
+    - type: forge.keeper.canvas_created
       description: Emitted when a new user truth canvas is created
       data_schema:
         user_id: string
         canvas_path: string
-    - type: forge.observer.journey_shaped
+    - type: forge.keeper.journey_shaped
       description: Emitted when a user journey is shaped from canvases
       data_schema:
         journey_id: string
         journey_path: string
-    - type: forge.observer.gap_filed
+    - type: forge.keeper.gap_filed
       description: Emitted when a gap analysis issue is filed
       data_schema:
         gap_id: string
@@ -90,9 +90,9 @@ events:
 type: skill-pack
 composition_paths:
   writes:
-    - grimoires/laboratory/canvases/
-    - grimoires/laboratory/journeys/
-    - grimoires/laboratory/synthesis/
+    - grimoires/keeper/canvas/
+    - grimoires/keeper/journeys/
+    - grimoires/keeper/synthesis/
 compose_with:
   - slug: crucible
     relationship: "Circular validation — Observer captures user truth, Crucible validates journeys, Observer consumes validation results"
