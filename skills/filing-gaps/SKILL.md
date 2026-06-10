@@ -243,8 +243,8 @@ Before creating any GitHub issue, classify the gap's evidence to prevent filing 
 ## Laboratory Artifacts
 
 - **Gap Report**: `grimoires/crucible/gaps/{journey-id}-gaps.md`
-- **Journey**: `grimoires/observer/journeys/{journey-id}.md`
-- **Reality**: `grimoires/observer/reality/{component}-reality.md`
+- **Journey**: `grimoires/keeper/journeys/{journey-id}.md`
+- **Reality**: `grimoires/keeper/reality/{component}-reality.md`
 - **Canvas(es)**: {list of source canvases}
 ```
 
@@ -255,7 +255,7 @@ Before generating the issue command, scan the MER timeline for snapshots of the 
 ```bash
 # Find MERs for the affected wallet(s) from gap report
 wallet_alias=$(echo "$gap" | grep -oP 'Canvas: `canvas/\K[^.]+')
-mer_files=$(grep -rl "wallet_alias: $wallet_alias" grimoires/observer/timeline/MER-*.md 2>/dev/null || true)
+mer_files=$(grep -rl "wallet_alias: $wallet_alias" grimoires/keeper/timeline/MER-*.md 2>/dev/null || true)
 ```
 
 If MER(s) found:

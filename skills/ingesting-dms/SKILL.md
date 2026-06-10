@@ -30,9 +30,9 @@ This skill replaces ~10 manual steps with a single invocation. The operator refi
 
 **Examples:**
 ```
-/ingest-dm grimoires/observer/imports/xabbu-discord-export.csv
-/ingest-dm grimoires/observer/imports/newuser.txt --username "NewUser" --wallet 0xabc...
-/ingest-dm grimoires/observer/imports/batch/user3.csv --username "user3"
+/ingest-dm grimoires/keeper/imports/xabbu-discord-export.csv
+/ingest-dm grimoires/keeper/imports/newuser.txt --username "NewUser" --wallet 0xabc...
+/ingest-dm grimoires/keeper/imports/batch/user3.csv --username "user3"
 ```
 
 **Arguments:**
@@ -59,7 +59,7 @@ This skill replaces ~10 manual steps with a single invocation. The operator refi
 
 Before interpreting any user quotes extracted from the DM conversation:
 
-1. Read `grimoires/observer/glossary.yaml`
+1. Read `grimoires/keeper/glossary.yaml`
 2. For each quote being annotated, check if any glossary term appears in the text (case-insensitive match on the `term` field)
 3. If a match is found:
    - Use the `meaning` field as the canonical interpretation
@@ -202,7 +202,7 @@ Only messages with exit code 0 (INGEST) proceed to canvas creation in Step 5.
 
 ### Step 5: Create Enriched Canvas
 
-Write canvas to `grimoires/observer/canvas/{username}-canvas.md` using the template below.
+Write canvas to `grimoires/keeper/canvas/{username}-canvas.md` using the template below.
 
 **Auto-populate from conversation:**
 
@@ -288,14 +288,14 @@ After writing the canvas file, wire it into the knowledge graph if it belongs to
 
 ```bash
 source scripts/observer/golden-path-lib.sh
-wire_canvas_links "grimoires/observer/canvas/{username}-canvas.md"
+wire_canvas_links "grimoires/keeper/canvas/{username}-canvas.md"
 ```
 
 This injects `<!-- midi:journey-links -->` sentinel with Journeys and Related Canvases sections if the canvas appears in any journey's `source_canvases`. If the canvas is not in any journey, this is a silent no-op.
 
 ### Step 6: Update State
 
-Update `grimoires/observer/state.yaml`:
+Update `grimoires/keeper/state.yaml`:
 - Increment `canvas_count` if new canvas
 - Update `last_observation` timestamp
 
@@ -333,7 +333,7 @@ emit_event "observer.feedback_captured" \
     "context": {
       "user_id": "{salted hash per redaction-guide.md, or omit if unavailable}",
       "user_tier": "{high | medium | low — derived from rank}",
-      "artifact_path": "grimoires/observer/canvas/{username}-canvas.md"
+      "artifact_path": "grimoires/keeper/canvas/{username}-canvas.md"
     },
     "subject": {
       "resolution_status": "{resolved | unresolved}",
@@ -364,7 +364,7 @@ See `grimoires/shared/feedback/redaction-guide.md` for hashing and redaction rul
 
 Display summary:
 ```
-Canvas created: grimoires/observer/canvas/{username}-canvas.md
+Canvas created: grimoires/keeper/canvas/{username}-canvas.md
 FeedbackEvent emitted: observer.feedback_captured (via Loa event bus)
   Score: Rank #{rank} | {crowd_tier}/{elite_tier} | {og}/{nft}/{onchain}
   Quotes extracted: {N}
@@ -425,7 +425,7 @@ confidence:
   validation_count: 0
   related_paths:
     - "lib/score-api/**"
-    - "grimoires/observer/canvas/"
+    - "grimoires/keeper/canvas/"
 schema_version: 2
 lifecycle_state: "{new_user|reactivating|power_user|churning}"
 last_enriched: "{ISO timestamp}"
@@ -716,7 +716,7 @@ fi
 
 ### Step 9: Emit Agent Interaction Log
 
-As the final step, append a JSONL line to `grimoires/observer/agent-logs/{YYYY-MM-DD}.jsonl`:
+As the final step, append a JSONL line to `grimoires/keeper/agent-logs/{YYYY-MM-DD}.jsonl`:
 
 ```json
 {
@@ -735,7 +735,7 @@ As the final step, append a JSONL line to `grimoires/observer/agent-logs/{YYYY-M
 - `duration_ms` is approximate (wall-clock estimate, not precise timer)
 - `artifacts_written` = canvas files created/updated
 - `events_emitted` = FeedbackEvents emitted
-- Create `grimoires/observer/agent-logs/` directory if it doesn't exist
+- Create `grimoires/keeper/agent-logs/` directory if it doesn't exist
 - See `grimoires/shared/feedback/agent-log-format.md` for format reference
 
 ---

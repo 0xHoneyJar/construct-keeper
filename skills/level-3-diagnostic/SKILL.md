@@ -61,7 +61,7 @@ If funds are at risk or system is down, **fix first**. For UX friction and expec
 
 Before interpreting any user quotes or forming hypotheses:
 
-1. Read `grimoires/observer/glossary.yaml`
+1. Read `grimoires/keeper/glossary.yaml`
 2. For each quote being analyzed, check if any glossary term appears in the text (case-insensitive match on the `term` field)
 3. If a match is found:
    - Use the `meaning` field as the canonical interpretation

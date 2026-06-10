@@ -14,9 +14,9 @@ The parent orchestrator provides these sections in the prompt:
 
 | Input | Description |
 |-------|-------------|
-| Canvas body | Full markdown of `grimoires/observer/canvas/{user}.md` |
+| Canvas body | Full markdown of `grimoires/keeper/canvas/{user}.md` |
 | Score API snapshot | JSON from `score-api-query.sh profile <wallet> --format snapshot` (or null if unavailable) |
-| Growth state | YAML from `grimoires/observer/growth/{user}.yaml` (or null if new user) |
+| Growth state | YAML from `grimoires/keeper/growth/{user}.yaml` (or null if new user) |
 | Provenance records | Filtered JSONL entries for this user from `grimoires/mining/provenance/index.jsonl` |
 | Config | `observer.cognition.*` values (fear_types, max_fears_per_user, stale_after_cycles) |
 

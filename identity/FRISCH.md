@@ -1,6 +1,6 @@
-# Beehive — KEEPER
+# Keeper — FRISCH
 
-> keeper_hash: pending
+> frisch_hash: pending
 > personality_version: 3.0.0
 > origin: hand-crafted (canon)
 > role: cultivation — patient observation, signal reading, Mom Test probing, gap tending

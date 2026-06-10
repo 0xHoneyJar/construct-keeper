@@ -21,13 +21,13 @@ Show what changed since the last validation of a specific artifact. Queries git 
 
 ```
 /drift {artifact-path}              # Check specific file
-/drift grimoires/observer/canvas/   # Check directory (all files within)
+/drift grimoires/keeper/canvas/   # Check directory (all files within)
 ```
 
 **Examples**:
 ```
-/drift grimoires/observer/canvas/xabbu-canvas.md
-/drift grimoires/observer/canvas/
+/drift grimoires/keeper/canvas/xabbu-canvas.md
+/drift grimoires/keeper/canvas/
 /drift grimoires/artisan/taste.md
 ```
 

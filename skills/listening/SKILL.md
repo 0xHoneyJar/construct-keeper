@@ -16,7 +16,7 @@ Golden path command that auto-chains the Observer's intake pipeline. Ingests chr
 1. **Preflight**: `gp_check_gh_auth`, `gp_check_supabase_key`
 2. **Chronicle ingest** (if gh auth passes): `scripts/observer/chronicle-ingest.sh` → count new entries
 3. **Daily synthesis**: invoke `/daily-synthesis` truename → count new signals
-4. **DM export scan**: check `grimoires/observer/dm-exports/` for unprocessed files → invoke `/ingest-dm` for each
+4. **DM export scan**: check `grimoires/keeper/dm-exports/` for unprocessed files → invoke `/ingest-dm` for each
 5. **Growth matching**: run `scripts/observer/growth-state.sh` outcome matching for new responses
 6. **Gap state sync**: run `scripts/observer/gap-sync.sh` to pull GitHub issue closures back to canvases
 7. **Status + suggest next**
@@ -51,7 +51,7 @@ else
 fi
 
 # Step 3: DM exports
-dm_dir="grimoires/observer/dm-exports"
+dm_dir="grimoires/keeper/dm-exports"
 if [[ -d "$dm_dir" ]]; then
   pending=$(find "$dm_dir" -name "*.txt" -o -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
   if [[ "$pending" -gt 0 ]]; then
@@ -76,7 +76,7 @@ if gp_check_growth_dir; then
   # Query recent provenance entries to find signals from this session.
 
   # Clean up orphaned .tmp files from previous crashed runs (see scripts/staleness.md)
-  find grimoires/observer/growth/ -name "*.tmp" -mmin +5 -delete 2>/dev/null
+  find grimoires/keeper/growth/ -name "*.tmp" -mmin +5 -delete 2>/dev/null
 
   # BATCH SIGNALS BY USER to avoid per-signal lock contention under burst conditions.
   # Without batching, a 50-signal burst causes 50 lock acquire/release cycles.
@@ -84,7 +84,7 @@ if gp_check_growth_dir; then
   declare -A signals_by_user  # user → array of signals
   FOR each newly_ingested_signal:
     user = signal.user
-    growth_path = "grimoires/observer/growth/${user}.yaml"
+    growth_path = "grimoires/keeper/growth/${user}.yaml"
     IF NOT exists(growth_path): CONTINUE
     signals_by_user[$user] += signal
 
@@ -100,8 +100,8 @@ if gp_check_growth_dir; then
     IF all_matches is empty: CONTINUE
 
     # Acquire lock ONCE per user, process all matches
-    proposed_path = "grimoires/observer/growth/${user}.proposed_matches.yaml"
-    lock_path = "grimoires/observer/growth/${user}.yaml.lock"
+    proposed_path = "grimoires/keeper/growth/${user}.proposed_matches.yaml"
+    lock_path = "grimoires/keeper/growth/${user}.yaml.lock"
     WITH flock(lock_path):
       # Re-read inside lock (avoids TOCTOU)
       IF NOT exists(proposed_path):
@@ -142,7 +142,7 @@ else
 fi
 
 # Step 5: Gap state sync — pull GitHub issue state back to canvases
-if [[ -f "grimoires/observer/gap-index.jsonl" ]]; then
+if [[ -f "grimoires/keeper/gap-index.jsonl" ]]; then
   if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
     sync_output=$(scripts/observer/gap-sync.sh 2>&1)
     resolved_count=$(echo "$sync_output" | grep -c "FILED → RESOLVED" || true)

@@ -40,7 +40,7 @@ gp_status_ok "journeys" "consolidated across ${canvas_count} canvases"
 
 # Step 2: Gap scan — count IDENTIFIED gaps across updated canvases
 identified_gaps=0
-for canvas in grimoires/observer/canvas/*.md; do
+for canvas in grimoires/keeper/canvas/*.md; do
   count=$(grep -c '^\*\*Status\*\*: IDENTIFIED' "$canvas" 2>/dev/null || true)
   identified_gaps=$((identified_gaps + count))
 done

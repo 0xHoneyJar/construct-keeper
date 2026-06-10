@@ -91,7 +91,7 @@ For each (pack, skill) pair:
 ### Phase 3: Compare with Previous Report
 
 ```
-Read previous report: grimoires/observer/agent-feedback/report-latest.md
+Read previous report: grimoires/keeper/agent-feedback/report-latest.md
 
 IF previous report exists:
   Parse previous state per skill
@@ -143,7 +143,7 @@ The bus auto-generates `id`, `time`, `specversion` in the CloudEvents envelope.
 
 ### Phase 5: Generate Report
 
-Write to `grimoires/observer/agent-feedback/report-{YYYY-MM-DD}.md`:
+Write to `grimoires/keeper/agent-feedback/report-{YYYY-MM-DD}.md`:
 
 ```markdown
 ---
@@ -188,9 +188,9 @@ transitions_detected: {N}
 - {actionable recommendation per concerning skill}
 ```
 
-Also copy to `grimoires/observer/agent-feedback/report-latest.md` (overwrite).
+Also copy to `grimoires/keeper/agent-feedback/report-latest.md` (overwrite).
 
-Create `grimoires/observer/agent-feedback/` directory if it doesn't exist.
+Create `grimoires/keeper/agent-feedback/` directory if it doesn't exist.
 
 ---
 
@@ -208,8 +208,8 @@ Create `grimoires/observer/agent-feedback/` directory if it doesn't exist.
 
 ## Integration Points
 
-- **Reads**: `grimoires/*/agent-logs/*.jsonl`, `grimoires/observer/agent-feedback/report-latest.md`
-- **Writes**: `grimoires/observer/agent-feedback/report-{date}.md`, `grimoires/shared/feedback/events/{date}.jsonl`
+- **Reads**: `grimoires/*/agent-logs/*.jsonl`, `grimoires/keeper/agent-feedback/report-latest.md`
+- **Writes**: `grimoires/keeper/agent-feedback/report-{date}.md`, `grimoires/shared/feedback/events/{date}.jsonl`
 - **Depends on**: Skills emitting agent logs (Task 1.7)
 - **Consumed by**: `/artisan-patterns` cross-domain analysis, `/stale` confidence system
 

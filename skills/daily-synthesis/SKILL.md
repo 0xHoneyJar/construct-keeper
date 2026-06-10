@@ -44,7 +44,7 @@ Builds on the existing `/synthesize-feedback` patterns with full automation via 
 
 ### Phase 1: Read State
 
-Read `grimoires/observer/synthesis/last-run.json` for processing state:
+Read `grimoires/keeper/synthesis/last-run.json` for processing state:
 ```json
 {
   "last_processed_at": "2026-02-06T08:42:28Z",
@@ -237,7 +237,7 @@ If not found: `username = <wallet_address first 10 chars>`
 
 **Step 6b: Check for existing canvas**
 
-Search `grimoires/observer/canvas/{username}*.md`
+Search `grimoires/keeper/canvas/{username}*.md`
 
 **Step 6b.5: Provenance Gate — Dedup & Hash Each Feedback Entry**
 
@@ -305,7 +305,7 @@ For each detected gap, note in the synthesis report for operator review.
 
 ### Phase 8: Generate Synthesis Report
 
-Write to `grimoires/observer/synthesis/feedback-{YYYY-MM-DD}.md`:
+Write to `grimoires/keeper/synthesis/feedback-{YYYY-MM-DD}.md`:
 
 ```markdown
 ---
@@ -390,7 +390,7 @@ event_date=$(date -u +"%Y-%m-%d")
 # Query INDEX.json for today's MERs
 todays_mers=$(jq -r --arg date "$event_date" \
     '[.entries[] | select(.date == $date)]' \
-    grimoires/observer/timeline/INDEX.json 2>/dev/null || echo "[]")
+    grimoires/keeper/timeline/INDEX.json 2>/dev/null || echo "[]")
 
 mer_count=$(echo "$todays_mers" | jq 'length')
 ```
@@ -406,7 +406,7 @@ For each MER in today's list, read the MER file to extract:
 ```bash
 for mer_entry in $(echo "$todays_mers" | jq -c '.[]'); do
     mer_id=$(echo "$mer_entry" | jq -r '.id')
-    mer_file="grimoires/observer/timeline/${mer_id}.md"
+    mer_file="grimoires/keeper/timeline/${mer_id}.md"
     if [[ -f "$mer_file" ]]; then
         # Parse frontmatter for data fields
         # Extract perception gaps from Perception vs Reality table
@@ -477,7 +477,7 @@ emit_event "observer.synthesis_completed" \
     "domain": "research",
     "target": {
       "type": "artifact",
-      "selector": "grimoires/observer/synthesis/feedback-{YYYY-MM-DD}.md"
+      "selector": "grimoires/keeper/synthesis/feedback-{YYYY-MM-DD}.md"
     },
     "signal": {
       "direction": "neutral",
@@ -487,7 +487,7 @@ emit_event "observer.synthesis_completed" \
       "kind": "feel"
     },
     "context": {
-      "artifact_path": "grimoires/observer/synthesis/feedback-{YYYY-MM-DD}.md"
+      "artifact_path": "grimoires/keeper/synthesis/feedback-{YYYY-MM-DD}.md"
     },
     "subject": {
       "resolution_status": "{resolved if --wallet filter matched, else unresolved}",
@@ -514,7 +514,7 @@ See `grimoires/shared/feedback/schema.md` for full schema reference.
 
 ### Phase 10: Update State
 
-Update `grimoires/observer/synthesis/last-run.json`:
+Update `grimoires/keeper/synthesis/last-run.json`:
 ```json
 {
   "last_processed_at": "{latest entry created_at}",
@@ -523,7 +523,7 @@ Update `grimoires/observer/synthesis/last-run.json`:
 }
 ```
 
-Update `grimoires/observer/state.yaml`:
+Update `grimoires/keeper/state.yaml`:
 - `canvas_count`: Updated count
 - `last_observation`: Now
 - `feedback_synthesis.last_run`: Now
@@ -536,7 +536,7 @@ Update `grimoires/observer/state.yaml`:
 
 ### Phase 11: Emit Agent Interaction Log
 
-As the final step, append a JSONL line to `grimoires/observer/agent-logs/{YYYY-MM-DD}.jsonl`:
+As the final step, append a JSONL line to `grimoires/keeper/agent-logs/{YYYY-MM-DD}.jsonl`:
 
 ```json
 {
@@ -556,7 +556,7 @@ As the final step, append a JSONL line to `grimoires/observer/agent-logs/{YYYY-M
 - `artifacts_written` = synthesis report + number of canvases updated/created
 - `events_emitted` = 1 (the aggregate FeedbackEvent from Phase 9)
 - Skip in `--dry-run` mode (no side effects)
-- Create `grimoires/observer/agent-logs/` directory if it doesn't exist
+- Create `grimoires/keeper/agent-logs/` directory if it doesn't exist
 - See `grimoires/shared/feedback/agent-log-format.md` for format reference
 
 ---
@@ -642,7 +642,7 @@ When `--dry-run` is passed:
 - **Depends on**: `scripts/observer/supabase-query.sh`, `scripts/observer/wallet-resolve.sh`, `scripts/observer/score-api-query.sh`
 - **Builds on**: `/synthesize-feedback` patterns (same classification logic, same canvas format)
 - **Feeds into**: `/shape` (enriched canvases), `/gap-to-issues` (detected gaps)
-- **State files**: `grimoires/observer/synthesis/last-run.json`, `grimoires/observer/state.yaml`
+- **State files**: `grimoires/keeper/synthesis/last-run.json`, `grimoires/keeper/state.yaml`
 
 ---
 

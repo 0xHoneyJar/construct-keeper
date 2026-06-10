@@ -21,8 +21,8 @@ Process multiple user DM exports in parallel using Claude Code native teams. A l
 
 ```
 /batch-observe <path1> <path2> ...                        # Multiple DM export files
-/batch-observe grimoires/observer/imports/*.csv            # Glob pattern
-/batch-observe --dir grimoires/observer/imports/           # All files in directory
+/batch-observe grimoires/keeper/imports/*.csv            # Glob pattern
+/batch-observe --dir grimoires/keeper/imports/           # All files in directory
 ```
 
 ---
@@ -83,7 +83,7 @@ Task:
     1. Read the file and extract the username
     2. Run: scripts/observer/wallet-resolve.sh {username}
     3. Run: scripts/observer/score-api-query.sh profile {wallet} --format snapshot
-    4. Create the enriched canvas at grimoires/observer/canvas/{username}.md
+    4. Create the enriched canvas at grimoires/keeper/canvas/{username}.md
     5. Follow the /ingest-dm SKILL.md template exactly
     6. When done, mark your task as completed and send a message to the leader
        with the canvas path and a summary of what was extracted.
@@ -127,8 +127,8 @@ Display archetype map and pattern summary to operator:
 Batch Observation Complete: {N} users processed
 
 Canvases Created:
-  - grimoires/observer/canvas/user1.md (Rank #X, {tier})
-  - grimoires/observer/canvas/user2.md (Rank #X, {tier})
+  - grimoires/keeper/canvas/user1.md (Rank #X, {tier})
+  - grimoires/keeper/canvas/user2.md (Rank #X, {tier})
   ...
 
 Cross-Canvas Patterns:
@@ -194,7 +194,7 @@ Batch observing is designed for initial canvas creation from DM exports. If a us
 
 The semantic collapse: treating "create" and "update" as the same operation because the output is the same file format. A new canvas is a hypothesis scaffold (LOW confidence, everything provisional). An existing canvas may contain validated hypotheses (MEDIUM confidence, evidence-backed). Overwriting validated with provisional is data loss.
 
-The correct behavior: before spawning a worker, check if `grimoires/observer/canvas/{username}-canvas.md` exists. If it does, either skip that user (report as "already observed") or run the worker in append-only mode (add new quotes to Quotes Library, do not overwrite User Profile or Level 3 Hypotheses). The leader should report skipped users separately from failed and successful users.
+The correct behavior: before spawning a worker, check if `grimoires/keeper/canvas/{username}-canvas.md` exists. If it does, either skip that user (report as "already observed") or run the worker in append-only mode (add new quotes to Quotes Library, do not overwrite User Profile or Level 3 Hypotheses). The leader should report skipped users separately from failed and successful users.
 
 A concrete scenario demonstrating both failure modes together:
 
