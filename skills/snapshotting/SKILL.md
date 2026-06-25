@@ -1,3 +1,10 @@
+---
+name: snapshotting
+description: Capture point-in-time MER (MiDi Experience Record) for a wallet — data state, visual screenshot, perception context, and decision metadata.
+user-invocable: true
+allowed-tools: Read, Write, Glob, Grep, Edit, Bash
+---
+
 # /snapshot — MiDi Experience Record (MER) Capture
 
 Capture a point-in-time MER for a wallet. Produces a 4-layer snapshot: data state, visual screenshot, user perception, and decision context.
